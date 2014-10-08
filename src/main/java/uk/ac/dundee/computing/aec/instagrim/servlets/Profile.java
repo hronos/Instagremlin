@@ -17,6 +17,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
+import uk.ac.dundee.computing.aec.instagrim.models.User;
 
 
 /**
@@ -39,10 +40,12 @@ public class Profile extends HttpServlet {
     private HashMap CommandsMap = new HashMap();
     Cluster cluster=null;
     
+    @Override
     public void init(ServletConfig config) throws ServletException {
         cluster = CassandraHosts.getCluster();
     }
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String args[] = Convertors.SplitRequestPath(request);
         int command;
@@ -65,7 +68,10 @@ public class Profile extends HttpServlet {
         
     }
     private void DisplayProfile(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        
+       User usr = new User();
+       usr.setCluster(cluster);
+       usr.
+       
     }
     
     private void DisplayExtended(String User, HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
@@ -81,11 +87,7 @@ public class Profile extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
+   
 
     private void error(String mess, HttpServletResponse response) throws ServletException, IOException {
 
@@ -94,7 +96,7 @@ public class Profile extends HttpServlet {
         out.println("<h1>You have a na error in your input</h1>");
         out.println("<h2>" + mess + "</h2>");
         out.close();
-        return;
+
     }
 
     /**
