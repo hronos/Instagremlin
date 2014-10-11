@@ -12,3 +12,6 @@ target
 *.out
 *.war
 target/*
+*.war
+
+*.war
