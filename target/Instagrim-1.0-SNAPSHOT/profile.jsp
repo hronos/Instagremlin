@@ -1,10 +1,7 @@
-<%-- 
-    Document   : profile
-    Created on : Oct 8, 2014, 6:11:17 PM
-    Author     : dlennart
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,5 +10,13 @@
     </head>
     <body>
         <h1>Profile</h1>
+        <%
+            String FirstName = (String) request.getAttribute("first_name");
+            String Args = (String) request.getAttribute("reqargs");
+        %>
+        <p><%=FirstName %></p>
+        <p><%=Args %></p>
+
+        
     </body>
 </html>

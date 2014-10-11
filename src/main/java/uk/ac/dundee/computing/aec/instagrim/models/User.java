@@ -15,7 +15,7 @@ import com.datastax.driver.core.Session;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
-import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+
 
 /**
  *
@@ -75,10 +75,34 @@ public class User {
                     return true;
             }
         }
+        
    
     
     return false;  
     }
+    
+    public String getFirstName(String username){
+            String FirstName=null;
+            Session session = cluster.connect("instagrim");
+            ResultSet rs = null;
+            PreparedStatement ps = session.prepare("select first_name from userprofiles where login =?");
+            BoundStatement boundStatement = new BoundStatement(ps);
+            
+            rs = session.execute( // this is where the query is executed
+                    boundStatement.bind(username));
+            if (rs.isExhausted()) {
+                System.out.println("No Data returned");
+                
+            } else {
+                for (Row row : rs) {
+
+                    FirstName = row.getString("first_name");
+                        return FirstName;
+                }
+            }
+            
+            return FirstName;
+        }
        public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }

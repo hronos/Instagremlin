@@ -4,17 +4,9 @@
         <servlet-name>User</servlet-name>
         <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.User</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>Profile</servlet-name>
-        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Profile</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>User</servlet-name>
         <url-pattern>/User</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Profile</servlet-name>
-        <url-pattern>/Profile</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
