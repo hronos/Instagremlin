@@ -81,11 +81,10 @@ public class User {
     return false;  
     }
     
-    public String getFirstName(String username){
-            String FirstName=null;
+    public ResultSet getUserData(String username){
             Session session = cluster.connect("instagrim");
             ResultSet rs = null;
-            PreparedStatement ps = session.prepare("select first_name from userprofiles where login =?");
+            PreparedStatement ps = session.prepare("select * from userprofiles where login =?");
             BoundStatement boundStatement = new BoundStatement(ps);
             
             rs = session.execute( // this is where the query is executed
@@ -94,14 +93,9 @@ public class User {
                 System.out.println("No Data returned");
                 
             } else {
-                for (Row row : rs) {
-
-                    FirstName = row.getString("first_name");
-                        return FirstName;
-                }
+                return rs;
             }
-            
-            return FirstName;
+            return rs;
         }
        public void setCluster(Cluster cluster) {
         this.cluster = cluster;

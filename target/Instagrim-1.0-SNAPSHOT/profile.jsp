@@ -12,7 +12,7 @@
         <h1>Profile</h1>
         <%
             String FirstName = (String) request.getAttribute("first_name");
-            String Args = (String) request.getAttribute("reqargs");
+            String Args = (String) request.getAttribute("last_name");
         %>
         <p><%=FirstName %></p>
         <p><%=Args %></p>

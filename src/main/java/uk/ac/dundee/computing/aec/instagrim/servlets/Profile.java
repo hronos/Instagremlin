@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
@@ -20,6 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.models.User;
+import com.datastax.driver.core.Row;
 
 
 
@@ -65,11 +67,18 @@ public class Profile extends HttpServlet {
     private void DisplayProfile(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
        User usr = new User();
        usr.setCluster(cluster);
-       String FirstName = usr.getFirstName(User);
-       RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
-       FirstName = usr.getFirstName(User);
+       ResultSet rs = usr.getUserData(User);
+       String FirstName = null; 
+       String LastName = null;
+        for (Row row : rs){
+        FirstName = row.getString("first_name");
+        LastName = row.getString("last_name");
+        
+        
+       }
+        RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
        request.setAttribute("first_name", FirstName);
-       request.setAttribute("reqargs", User);
+       request.setAttribute("last_name", LastName);
        
        rd.forward(request, response);
        
