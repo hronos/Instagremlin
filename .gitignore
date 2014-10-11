@@ -10,4 +10,5 @@ target
 *.DS_Store
 *.swp
 *.out
+*.war
 target/*

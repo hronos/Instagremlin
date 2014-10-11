@@ -70,13 +70,13 @@ public class Profile extends HttpServlet {
        ResultSet rs = usr.getUserData(User);
        String FirstName = null; 
        String LastName = null;
-        for (Row row : rs){
+       
+       for (Row row : rs){
         FirstName = row.getString("first_name");
         LastName = row.getString("last_name");
-        
-        
        }
-        RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
+       
+       RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
        request.setAttribute("first_name", FirstName);
        request.setAttribute("last_name", LastName);
        
