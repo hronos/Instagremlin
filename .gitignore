@@ -23,3 +23,11 @@ target/maven-archiver/pom.properties
 *.class
 
 *.class
+
+target/classes/uk/ac/dundee/computing/aec/instagrim/lib/Keyspaces.class
+
+*.war
+
+target/Instagrim-1.0-SNAPSHOT.war
+
+target/maven-archiver/pom.properties

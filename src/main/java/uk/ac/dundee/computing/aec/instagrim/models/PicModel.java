@@ -18,6 +18,8 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.Bytes;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -80,6 +82,43 @@ public class PicModel {
             Date DateAdded = new Date();
             session.execute(bsInsertPic.bind(picid, buffer, thumbbuf,processedbuf, user, DateAdded, length,thumblength,processedlength, type, name));
             session.execute(bsInsertPicToUser.bind(picid, user, DateAdded));
+            session.close();
+
+        } catch (IOException ex) {
+            System.out.println("Error --> " + ex);
+        }
+    }
+    
+    
+    
+    public void insertAvatar(byte[] b, String type, String name, String user) {
+        try {
+            Convertors convertor = new Convertors();
+
+            String types[]=Convertors.SplitFiletype(type);
+            ByteBuffer buffer = ByteBuffer.wrap(b);
+            int length = b.length;
+            java.util.UUID picid = convertor.getTimeUUID();
+            
+            //The following is a quick and dirty way of doing this, will fill the disk quickly !
+            Boolean success = (new File("/var/tmp/instagrim/")).mkdirs();
+            FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
+
+            output.write(b);
+            byte []  thumbb = picresize(picid.toString(),types[1]);
+            int thumblength= thumbb.length;
+            ByteBuffer thumbbuf=ByteBuffer.wrap(thumbb);
+            byte[] processedb = picdecolour(picid.toString(),types[1]);
+            ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
+            int processedlength=processedb.length;
+            Session session = cluster.connect("instagrim");
+            user = "dlennart";
+
+            Statement update = QueryBuilder.update("instagrim", "userprofiles")
+                .with(QueryBuilder.set("avatar", buffer ))
+                .where((QueryBuilder.eq("login", user)));
+            System.out.println("Statement: " + update);
+            session.execute(update);
             session.close();
 
         } catch (IOException ex) {
@@ -156,7 +195,40 @@ public class PicModel {
         }
         return Pics;
     }
+    
+    public Pic getAvatar(String user){
+        Session session = cluster.connect("instagrim");
+        ByteBuffer bImage = null;
+        String type = null;
+        int length = 0;
+        try {
+            ResultSet rs = null;
+         
+            Statement select = QueryBuilder.select().column("avatar").from("instagrim", "userprofiles")
+                .where((QueryBuilder.eq("login", "dlennart")));
+            System.out.println("Statement: " + select);
+            rs = session.execute(select);
+            session.close();
 
+            if (rs.isExhausted()) {
+                System.out.println("No Images returned");
+                return null;
+            } else {
+                for (Row row : rs) {
+                    bImage = row.getBytes("avatar");
+                    
+
+                }
+            }
+        } catch (Exception et) {
+            System.out.println("Can't get Pic" + et);
+            return null;
+        }
+        Pic p = new Pic();
+        p.setPic(bImage, length, type);
+
+        return p; 
+    }
     public Pic getPic(int image_type, java.util.UUID picid) {
         Session session = cluster.connect("instagrim");
         ByteBuffer bImage = null;

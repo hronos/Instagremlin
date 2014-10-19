@@ -5,6 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+import uk.ac.dundee.computing.aec.instagrim.models.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,14 +72,17 @@ public class Profile extends HttpServlet {
        String FirstName = null; 
        String LastName = null;
        
+       
        for (Row row : rs){
         FirstName = row.getString("first_name");
         LastName = row.getString("last_name");
+        
        }
        
        RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
        request.setAttribute("first_name", FirstName);
        request.setAttribute("last_name", LastName);
+       request.setAttribute("username", User);
        
        rd.forward(request, response);
        

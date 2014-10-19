@@ -5,75 +5,104 @@
  */
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+import com.datastax.driver.core.Cluster;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
+import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
+import uk.ac.dundee.computing.aec.instagrim.models.User;
+import java.nio.ByteBuffer;
+import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+
 
 /**
  *
  * @author dlennart
  */
-@WebServlet(name = "Avatar", urlPatterns = {"/Profile/Avatar"})
+@WebServlet(name = "Avatar", urlPatterns = {"/Profile/Avatar", "/Profile/Avatar/*"})
+@MultipartConfig
+
 public class Avatar extends HttpServlet {
+    Cluster cluster=null;
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        cluster = CassandraHosts.getCluster();
+    }
+    private void DisplayAvatar(HttpServletResponse response) throws ServletException, IOException {
+        PicModel tm = new PicModel();
+        tm.setCluster(cluster);
+  
+        
+        Pic p = tm.getAvatar("dlennart");
+        System.out.println("Length = " + p.getLength());
+        
+        OutputStream out = response.getOutputStream();
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Avatar</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Avatar at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        response.setContentType("image/png");
+        //response.setContentLength(p.getLength());
+        //out.write(Image);
+        InputStream is = new ByteArrayInputStream(p.getBytes());
+        BufferedInputStream input = new BufferedInputStream(is);
+        byte[] buffer = new byte[8192];
+        for (int length = 0; (length = input.read(buffer)) > 0;) {
+            out.write(buffer, 0, length);
         }
+        out.close();
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        DisplayAvatar(response);
+        
+        
     }
+    
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String args[] = Convertors.SplitRequestPath(request);
+        User usr = new User();
+        for (Part part : request.getParts()) {
+            System.out.println("Part Name " + part.getName());
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+            String type = part.getContentType();
+            String filename = part.getSubmittedFileName();
+            
+            InputStream is = request.getPart(part.getName()).getInputStream();
+            int i = is.available();
+            
+            
+            if (i > 0) {
+                byte[] b = new byte[i + 1];
+                is.read(b);
+                System.out.println("Length : " + b.length);
+                PicModel tm = new PicModel();
+                tm.setCluster(cluster);
+                tm.insertAvatar(b, type, filename, args[2]);
+
+                is.close();
+            }
+            RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
+             rd.forward(request, response);
+        }
+
     }
+    
 
     /**
      * Returns a short description of the servlet.
