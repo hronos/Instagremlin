@@ -31,3 +31,9 @@ target/classes/uk/ac/dundee/computing/aec/instagrim/lib/Keyspaces.class
 target/Instagrim-1.0-SNAPSHOT.war
 
 target/maven-archiver/pom.properties
+
+*.class
+
+*.class
+
+*.class

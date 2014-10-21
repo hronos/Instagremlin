@@ -83,9 +83,6 @@ public class User {
                     return true;
             }
         }
-        
-   
-    
     return false;  
     }
     
@@ -97,6 +94,7 @@ public class User {
             
             rs = session.execute( // this is where the query is executed
                     boundStatement.bind(username));
+            session.close();
             if (rs.isExhausted()) {
                 System.out.println("No Data returned");
                 
@@ -105,6 +103,17 @@ public class User {
             }
             return rs;
         }
+    public void updateUserData(String username, String last_name, String first_name){
+        
+        Session session = cluster.connect("instagrim");
+        Statement update = QueryBuilder.update("instagrim", "userprofiles")
+                .with(QueryBuilder.set("last_name", last_name))
+                .and(QueryBuilder.set("first_name", first_name))
+                .where((QueryBuilder.eq("login", username)));
+        System.out.println("Statement: " + update);
+        session.execute(update);
+        session.close();
+    }
     
        public void setCluster(Cluster cluster) {
         this.cluster = cluster;

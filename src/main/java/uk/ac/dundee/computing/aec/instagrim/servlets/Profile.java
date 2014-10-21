@@ -50,6 +50,12 @@ public class Profile extends HttpServlet {
     private HashMap CommandsMap = new HashMap();
     Cluster cluster=null;
     
+    public Profile()
+    {
+        super();
+        CommandsMap.put("Display", 1);
+        CommandsMap.put("Update", 2);
+    }
     @Override
     public void init(ServletConfig config) throws ServletException {
         cluster = CassandraHosts.getCluster();
@@ -58,11 +64,67 @@ public class Profile extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String args[] = Convertors.SplitRequestPath(request);
+        int command = 0;
         System.out.println("arg0 "+args[0]);
         System.out.println("arg1 "+args[1]);
         System.out.println("arg2 "+args[2]);
-        DisplayProfile(args[2], request, response);
-       
+        System.out.println("command " + args[3]);
+        try {
+            command = (Integer) CommandsMap.get(args[3]);
+             
+        } catch (Exception et) {
+           
+            error("Bad Operator ", response);
+            return;
+        }
+        System.out.println("arg0 "+args[0]);
+        System.out.println("arg1 "+args[1]);
+        System.out.println("arg2 "+args[2]);
+        System.out.println("command " + args[3]);
+        
+        try
+        {
+            switch (command) 
+            {
+            case 1:
+                DisplayProfile(args[2], request, response);
+                break;
+            case 2:
+                updateProfile(args[2], request, response);
+                break;
+            default:
+                error("Bad Operator", response);
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            error("OutOfBounds", response);
+        }
+    }
+    
+    private void updateProfile(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        User usr = new User();
+        usr.setCluster(cluster);
+        ResultSet rs = usr.getUserData(User);
+        RequestDispatcher rd = request.getRequestDispatcher("/changeprofile.jsp");
+        for (Row row : rs){
+            request.setAttribute("first_name", row.getString("first_name"));
+            request.setAttribute("last_name", row.getString("last_name"));
+            request.setAttribute("username", row.getString("login"));
+        }
+        rd.forward(request, response);
+        
+    }
+    
+    @Override
+    protected void doPost (HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String username = "dlennart";
+        String last_name = request.getParameter("last_name");
+        String first_name = request.getParameter("first_name");
+        User usr = new User();
+        usr.setCluster(cluster);
+        usr.updateUserData(username, last_name, first_name);
         
     }
     private void DisplayProfile(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -86,6 +148,16 @@ public class Profile extends HttpServlet {
        
        rd.forward(request, response);
        
+    }
+    
+    private void error(String mess, HttpServletResponse response) throws ServletException, IOException {
+
+        PrintWriter out = null;
+        out = new PrintWriter(response.getOutputStream());
+        out.println("<h1>You have a na error in your input</h1>");
+        out.println("<h2>" + mess + "</h2>");
+        out.close();
+        return;
     }
    
 

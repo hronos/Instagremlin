@@ -69,9 +69,7 @@ public class Avatar extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DisplayAvatar(response);
-        
-        
+        DisplayAvatar(response); 
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -85,8 +83,6 @@ public class Avatar extends HttpServlet {
             
             InputStream is = request.getPart(part.getName()).getInputStream();
             int i = is.available();
-            
-            
             if (i > 0) {
                 byte[] b = new byte[i + 1];
                 is.read(b);
@@ -94,7 +90,6 @@ public class Avatar extends HttpServlet {
                 PicModel tm = new PicModel();
                 tm.setCluster(cluster);
                 tm.insertAvatar(b, type, filename, args[2]);
-
                 is.close();
             }
             RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");

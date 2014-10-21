@@ -18,15 +18,15 @@
         <p><%=FirstName %></p>
         <p><%=Args %></p>
         <p><%=username %></p>
-        <p><image src="Avatar/dlennart"</p>
+        <p><image src="/Instagrim/Profile/Avatar/dlennart/Display"</p>
         <h3>Profile picture Upload</h3>
             <form method="POST" enctype="multipart/form-data" action="Avatar/<%=username %>">
                 File to upload: <input type="file" name="upfile"><br/>
 
                 <br/>
-                <input type="submit" value="Press"> to upload the file!
-            </form><h3>File Upload</h3>
-            
+                <input type="submit" value="Upload">
+            </form>
+                
 
         
     </body>
