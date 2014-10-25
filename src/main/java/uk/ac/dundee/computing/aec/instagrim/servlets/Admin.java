@@ -118,6 +118,53 @@ public class Admin extends HttpServlet {
             throws ServletException, IOException {
         
     }
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException{
+        String args[] = Convertors.SplitRequestPath(request);
+        int command = 0;
+        System.out.println("arg0 "+args[0]);
+        System.out.println("arg1 "+args[1]);
+        System.out.println("arg2 "+args[2]);
+        System.out.println("arg3 "+args[3]);
+        try {
+            command = (Integer) CommandsMap.get(args[2]);     
+        } catch (Exception e) {   
+            error("Bad Operator ", response);
+            return;
+        }
+        System.out.println("arg0 "+args[0]);
+        System.out.println("arg1 "+args[1]);
+        System.out.println("arg2 "+args[2]);
+        System.out.println("arg3 "+args[3]);
+       
+        
+        try
+        {
+            switch (command) 
+            {
+            case 1:
+                deleteUser(request, response, args[3]);
+                break;
+            case 2:
+                
+                break;
+            default:
+                error("Bad Operator", response);
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            error("OutOfBounds", response);
+        }
+        
+    
+    }
+    
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response, String user) 
+            throws ServletException, IOException{
+        System.out.println("Delete method called for " +user);
+    }
     private void showUsers(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException{
         

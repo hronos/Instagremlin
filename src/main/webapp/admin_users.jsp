@@ -10,6 +10,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+       
+        
+        
         <title>Admin - Users</title>
     </head>
     <body>
@@ -30,16 +33,27 @@
                 String first_name = iterator.next().toString();
                 String username = iterator.next().toString();
                 %>
+                
                 <p>Username: <%=username%> 
                     &nbsp; Last name: <%=last_name%> 
                     &nbsp; First name: <%=first_name%>
+                    <a id="delete" href="#">delete</a>
                 </p>
+                
            <% }
         }
         %>
         
         
-        
+      <a href="#" id="blabla">Text</a>
+
+<script type="text/javascript">
+$(document).load(function(){
+  $('#blabla').click(function(){
+  alert("Clicked");
+  });
+});
+</script>  
             
     </body>
 </html>
