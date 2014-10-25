@@ -3,6 +3,7 @@
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Login.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/Keyspaces.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/models/PicModel.java
+/Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Admin.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/CassandraHosts.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Profile.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Register.java
