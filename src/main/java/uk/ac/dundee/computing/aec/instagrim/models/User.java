@@ -115,6 +115,18 @@ public class User {
         session.close();
     }
     
+    public void deleteUser(String username){
+        try{
+            Session session = cluster.connect("instagrim");
+            Statement delete = QueryBuilder.delete()
+                    .from("instagrim", "userprofiles")
+                    .where((QueryBuilder.eq("login", username)));
+            System.out.println("Statement" + delete);
+            session.execute(delete);
+            session.close();
+        } catch (Exception e){}
+    }
+    
        public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
