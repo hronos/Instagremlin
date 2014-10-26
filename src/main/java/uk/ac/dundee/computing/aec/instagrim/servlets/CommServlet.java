@@ -77,7 +77,7 @@ public class CommServlet extends HttpServlet {
         c.addComment(user, id, text);
         
         request.setAttribute("msg", "Posted successfully");
-        RequestDispatcher rd = request.getRequestDispatcher("/message.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/msg.jsp");
         rd.forward(request, response);
     }
     

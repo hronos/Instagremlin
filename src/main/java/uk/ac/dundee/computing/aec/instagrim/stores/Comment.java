@@ -43,10 +43,4 @@ public class Comment {
         this.date = date;
     }
     
-    public void commentAttr(String author, String comment, Date date)
-    {
-        this.user = user;
-        this.comment = comment;
-        this.date = date;
-    }
 }
