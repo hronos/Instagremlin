@@ -130,10 +130,6 @@ public class Admin extends HttpServlet {
             error("Bad Operator ", response);
             return;
         }
-        
-        
-       
-        
         try
         {
             switch (command) 

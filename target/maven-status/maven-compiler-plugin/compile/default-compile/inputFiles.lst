@@ -1,8 +1,11 @@
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/AeSimpleSHA1.java
+/Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/stores/Comment.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/Convertors.java
+/Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/CommServlet.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Login.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/Keyspaces.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/models/PicModel.java
+/Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/models/CommModel.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Admin.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/lib/CassandraHosts.java
 /Users/dlennart/uni/Internet programming/Projects/Instagremlin/src/main/java/uk/ac/dundee/computing/aec/instagrim/servlets/Profile.java

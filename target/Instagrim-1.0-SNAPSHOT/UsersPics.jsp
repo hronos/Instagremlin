@@ -22,6 +22,11 @@
         </header>
         
         <nav>
+            <% LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
+           if (lg != null) {
+            String UserName = lg.getUsername();
+                if (lg.getlogedin()) {
+            %>
             <ul>
                 <li class="nav"><a href="/Instagrim/upload.jsp">Upload</a></li>
                 <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
@@ -43,11 +48,14 @@
                 Pic p = (Pic) iterator.next();
 
         %>
-        <a href="/Instagrim/Image/<%=p.getSUUID()%>" ><img src="/Instagrim/Thumb/<%=p.getSUUID()%>"></a><br/><%
+        <a href="/Instagrim/Image/<%=p.getSUUID()%>"><img src="/Instagrim/Thumb/<%=p.getSUUID()%>"></a><br/>
+        <a href="/Instagrim/Image/Comments/<%=p.getSUUID()%>">Comments</a>
+        <%
 
             }
             }
         %>
+        <% }} %>
         </article>
         <footer>
             <ul>

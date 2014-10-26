@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -24,7 +25,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
+import uk.ac.dundee.computing.aec.instagrim.models.CommModel;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -57,6 +60,7 @@ public class Image extends HttpServlet {
         CommandsMap.put("Image", 1);
         CommandsMap.put("Images", 2);
         CommandsMap.put("Thumb", 3);
+        CommandsMap.put("Comments", 4);
 
     }
 
@@ -72,9 +76,17 @@ public class Image extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         String args[] = Convertors.SplitRequestPath(request);
-        int command;
+        int command, command2 = 0;
         try {
-            command = (Integer) CommandsMap.get(args[1]);
+            try
+            {
+                command = (Integer) CommandsMap.get(args[2]);
+                command2 = (Integer) CommandsMap.get(args[1]);
+            }
+            catch (Exception et)
+            {
+                command = (Integer) CommandsMap.get(args[1]);
+            }
         } catch (Exception et) {
             error("Bad Operator", response);
             return;
@@ -89,9 +101,33 @@ public class Image extends HttpServlet {
             case 3:
                 DisplayImage(Convertors.DISPLAY_THUMB,args[2],  response);
                 break;
+            case 4:
+                if (command2 == 1)
+                {
+                    showComments(args[3],  response, request);
+                }
+                else
+                {
+                    error("Bad Operator", response);
+                }
+                
             default:
                 error("Bad Operator", response);
         }
+    }
+    
+    public void showComments(String image, HttpServletResponse response, HttpServletRequest request) throws ServletException, IOException
+    {
+        System.out.println("Comments");
+
+        CommModel c = new CommModel();
+        c.setCluster(cluster);
+        ArrayList<Comment> comments = c.fetchComments(java.util.UUID.fromString(image));
+
+        request.setAttribute("comments",comments);
+        request.setAttribute("picture",image);
+        RequestDispatcher rd = request.getRequestDispatcher("/comment.jsp");
+        rd.include(request, response);        
     }
 
     private void DisplayImageList(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

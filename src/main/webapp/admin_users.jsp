@@ -60,12 +60,6 @@
                 
            <% }
         }
-        %>
-        
-        
-      <button class="remove" id="15">x</button>
-
- 
-            
+        %>          
     </body>
 </html>
