@@ -50,6 +50,11 @@ public final class Keyspaces {
                     + "      addresses  map<text, frozen <address>>,\n"
                     + "      avatar  blob"
                     + "  );";
+            String CreateLike= "CREATE TABLE if not exists instagrim.like ("
+                    + " picid uuid,\n  "
+                    + " user varchar,\n"
+                    + " PRIMARY KEY (picid,user)"
+                    + ")";
             String CreateComment = "CREATE TABLE if not exists instagrim.comment(\n"
                     + "      picid uuid,\n"
                     + "      user varchar,\n"
@@ -100,6 +105,13 @@ public final class Keyspaces {
                 session.execute(cqlQuery);
             } catch (Exception et) {
                 System.out.println("Can't create Address Profile " + et);
+            }
+            System.out.println("" + CreateLike);
+            try {
+                SimpleStatement cqlQuery = new SimpleStatement(CreateLike);
+                session.execute(cqlQuery);
+            } catch (Exception et) {
+                System.out.println("Can't create like table" + et);
             }
             System.out.println("" + CreateComment);
             try {

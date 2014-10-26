@@ -25,10 +25,10 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
  *
  * @author dlennart
  */
-public class CommModel {
+public class SocialModel {
     Cluster cluster;
     
-    public CommModel() {
+    public SocialModel() {
     }
     
     public void setCluster(Cluster cluster) {
@@ -83,5 +83,69 @@ public class CommModel {
                 .value("date", date);
         session.execute(insert);
         session.close();
+    }
+    
+    public void deleteComment(String id, Date date){
+        Session session = cluster.connect("instagrim");
+        java.util.UUID picid = UUID.fromString(id);
+        Statement delete = QueryBuilder.delete()
+                .from("instagrim", "comment")
+                .where(QueryBuilder.eq("picid", picid))
+                .and(QueryBuilder.eq("date", date));
+        session.execute(delete);
+        session.close();
+    }
+    
+    public void addLike(String id, String user){
+        
+        Session session = cluster.connect("instagrim");
+        java.util.UUID picid = UUID.fromString(id);
+        Statement insert = QueryBuilder.insertInto("instagrim", "like")
+                .value("picid", picid)
+                .value("user", user);
+        session.execute(insert);
+        session.close();
+    }
+    
+    public void removeLike(String id, String user){
+        java.util.UUID picid = UUID.fromString(id);
+        Session session = cluster.connect("instagrim");
+        Statement delete = QueryBuilder.delete()
+                .from("instagrim", "like")
+                .where(QueryBuilder.eq("picid", picid))
+                .and(QueryBuilder.eq("user", user));
+        session.execute(delete);
+        session.close();
+    }
+    
+    public String countLikes(String id){
+        java.util.UUID picid = UUID.fromString(id);
+        Session session = cluster.connect("instagrim");
+        Statement count = QueryBuilder.select()
+                .countAll()
+                .from ("like")
+                .where(QueryBuilder.eq("picid", picid));
+        ResultSet rs = null;
+        rs = session.execute(count);
+        String counter = rs.toString();
+        return counter;
+    }
+    
+    public boolean checkLiked(String id, String user){
+        java.util.UUID picid = UUID.fromString(id);
+        Session session = cluster.connect("instagrim");
+        Statement select = QueryBuilder.select()
+                .all()
+                .from("like")
+                .where(QueryBuilder.eq("user", user))
+                .and(QueryBuilder.eq("picid", picid));
+        ResultSet rs = null;
+        rs = session.execute(select);
+        
+        if (rs.isExhausted()){
+            return false;
+        }else{
+            return true;
+        }
     }
 }

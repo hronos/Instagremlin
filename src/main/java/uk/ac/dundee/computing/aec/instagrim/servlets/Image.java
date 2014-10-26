@@ -25,7 +25,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
-import uk.ac.dundee.computing.aec.instagrim.models.CommModel;
+import uk.ac.dundee.computing.aec.instagrim.models.SocialModel;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
 import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
@@ -104,6 +104,7 @@ public class Image extends HttpServlet {
             case 4:
                 if (command2 == 1)
                 {
+                    
                     showComments(args[3],  response, request);
                 }
                 else
@@ -120,12 +121,24 @@ public class Image extends HttpServlet {
     {
         System.out.println("Comments");
 
-        CommModel c = new CommModel();
+        SocialModel c = new SocialModel();
         c.setCluster(cluster);
         ArrayList<Comment> comments = c.fetchComments(java.util.UUID.fromString(image));
-
+        
+        boolean liked = false;
+        HttpSession session=request.getSession();
+        LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+        String username = "majed";
+        if (lg.getlogedin()){
+            username=lg.getUsername();
+        }
+        liked = c.checkLiked(image, username);
+            
+        request.setAttribute("likes", c.countLikes(image));
         request.setAttribute("comments",comments);
         request.setAttribute("picture",image);
+        request.setAttribute("liked", liked);
+        request.setAttribute("user", username);
         RequestDispatcher rd = request.getRequestDispatcher("/comment.jsp");
         rd.include(request, response);        
     }
