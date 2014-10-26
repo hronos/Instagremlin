@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,7 +34,7 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
  *
  * @author dlennart
  */
-@WebServlet(name = "Avatar", urlPatterns = {"/Profile/Avatar", "/Profile/Avatar/*"})
+@WebServlet(name = "Avatar", urlPatterns = {"/Avatar", "/Avatar/*"})
 @MultipartConfig
 
 public class Avatar extends HttpServlet {
@@ -45,12 +44,12 @@ public class Avatar extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         cluster = CassandraHosts.getCluster();
     }
-    private void DisplayAvatar(HttpServletResponse response) throws ServletException, IOException {
+    private void DisplayAvatar(HttpServletResponse response, String user) throws ServletException, IOException {
+        
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
-  
         
-        Pic p = tm.getAvatar("dlennart");
+        Pic p = tm.getAvatar(user);
         System.out.println("Length = " + p.getLength());
         
         OutputStream out = response.getOutputStream();
@@ -69,7 +68,8 @@ public class Avatar extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DisplayAvatar(response); 
+        String args[] = Convertors.SplitRequestPath(request);
+        DisplayAvatar(response, args[2]); 
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -92,8 +92,9 @@ public class Avatar extends HttpServlet {
                 tm.insertAvatar(b, type, filename, args[2]);
                 is.close();
             }
-            RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
-             rd.forward(request, response);
+            request.setAttribute("msg", "avatar uploaded");
+            RequestDispatcher rd = request.getRequestDispatcher("/msg.jsp");
+            rd.forward(request, response);
         }
 
     }

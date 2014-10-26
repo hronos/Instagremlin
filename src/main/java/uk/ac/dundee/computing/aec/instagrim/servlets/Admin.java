@@ -14,7 +14,6 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -27,6 +26,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import javax.servlet.http.HttpSession;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 
 /**
  *
@@ -69,9 +70,7 @@ public class Admin extends HttpServlet {
         
         String args[] = Convertors.SplitRequestPath(request);
         int command = 0;
-        System.out.println("arg0 "+args[0]);
-        System.out.println("arg1 "+args[1]);
-        System.out.println("arg2 "+args[2]);
+        
         
         try {
             command = (Integer) CommandsMap.get(args[2]);     
@@ -79,29 +78,36 @@ public class Admin extends HttpServlet {
             error("Bad Operator ", response);
             return;
         }
-        System.out.println("arg0 "+args[0]);
-        System.out.println("arg1 "+args[1]);
-        System.out.println("arg2 "+args[2]);
-       
         
-        try
-        {
-            switch (command) 
+        HttpSession session=request.getSession();
+        LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+        String username = "majed";
+        if (lg.getlogedin()){
+            username=lg.getUsername();
+        }
+        // Make sure only admin user can access admin panel
+        //if (username == "dlennart"){
+            try
             {
-            case 1:
-                showUsers(request, response);
-                break;
-            case 2:
-                //showPictures(request, response);
-                break;
-            default:
-                error("Bad Operator", response);
+                switch (command) 
+                {
+                case 1:
+                    showUsers(request, response);
+                    break;
+                case 2:
+                    //showPictures(request, response);
+                    break;
+                default:
+                    error("Bad Operator", response);
+                }
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
-            error("OutOfBounds", response);
-        }
+            catch (ArrayIndexOutOfBoundsException e)
+            {
+                error("OutOfBounds", response);
+            }
+        //}else{
+        //    authError(request, response);
+        //}
         
     }
 
@@ -130,26 +136,28 @@ public class Admin extends HttpServlet {
             error("Bad Operator ", response);
             return;
         }
-        try
-        {
-            switch (command) 
+        
+            try
             {
-            case 1:
-                String user = args[3];
-                deleteUser(request, response, user);
-                
-                break;
-            case 2:
-                
-                break;
-            default:
-                error("Bad Operator", response);
+                switch (command) 
+                {
+                case 1:
+                    String user = args[3];
+                    deleteUser(request, response, user);
+
+                    break;
+                case 2:
+
+                    break;
+                default:
+                    error("Bad Operator", response);
+                }
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
-            error("OutOfBounds", response);
-        }
+            catch (ArrayIndexOutOfBoundsException e)
+            {
+                error("OutOfBounds", response);
+            }
+        
         
     
     }
@@ -162,6 +170,12 @@ public class Admin extends HttpServlet {
         u.deleteUser(user);
         
         
+    }
+    private void authError(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException{
+        request.setAttribute("msg", "You have no rights to see the admin console");
+        RequestDispatcher rd = request.getRequestDispatcher("/msg.jsp");
+        rd.forward(request, response);
     }
     private void showUsers(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException{

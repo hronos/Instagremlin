@@ -13,6 +13,7 @@
     </head>
     <body>
         <h1>Update Profile</h1>
+        <%@ include file="menu.jsp" %>
         <%
             String FirstName = (String) request.getAttribute("first_name");
             String LastName = (String) request.getAttribute("last_name");

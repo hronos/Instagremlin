@@ -5,12 +5,13 @@
  */
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
-import uk.ac.dundee.computing.aec.instagrim.models.User;
+
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import java.io.PrintWriter;
@@ -23,6 +24,7 @@ import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.models.User;
 import com.datastax.driver.core.Row;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 
 
 
@@ -63,12 +65,14 @@ public class Profile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session=request.getSession();
+        LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+        String username = "majed";
+        if (lg.getlogedin()){
+            username=lg.getUsername();
+        }
         String args[] = Convertors.SplitRequestPath(request);
         int command = 0;
-        System.out.println("arg0 "+args[0]);
-        System.out.println("arg1 "+args[1]);
-        System.out.println("arg2 "+args[2]);
-        System.out.println("command " + args[3]);
         try {
             command = (Integer) CommandsMap.get(args[3]);
              
@@ -77,20 +81,16 @@ public class Profile extends HttpServlet {
             error("Bad Operator ", response);
             return;
         }
-        System.out.println("arg0 "+args[0]);
-        System.out.println("arg1 "+args[1]);
-        System.out.println("arg2 "+args[2]);
-        System.out.println("command " + args[3]);
         
         try
         {
             switch (command) 
             {
             case 1:
-                DisplayProfile(args[2], request, response);
+                DisplayProfile(username, request, response);
                 break;
             case 2:
-                updateProfile(args[2], request, response);
+                updateProfile(username, request, response);
                 break;
             default:
                 error("Bad Operator", response);
@@ -103,23 +103,37 @@ public class Profile extends HttpServlet {
     }
     
     private void updateProfile(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        User usr = new User();
-        usr.setCluster(cluster);
-        ResultSet rs = usr.getUserData(User);
-        RequestDispatcher rd = request.getRequestDispatcher("/changeprofile.jsp");
-        for (Row row : rs){
-            request.setAttribute("first_name", row.getString("first_name"));
-            request.setAttribute("last_name", row.getString("last_name"));
-            request.setAttribute("username", row.getString("login"));
+        HttpSession session=request.getSession();
+        LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+        String username = "majed";
+        if (lg.getlogedin()){
+            username=lg.getUsername();
         }
-        rd.forward(request, response);
-        
+        if (username == User){
+            User usr = new User();
+            usr.setCluster(cluster);
+            ResultSet rs = usr.getUserData(User);
+            RequestDispatcher rd = request.getRequestDispatcher("/changeprofile.jsp");
+            for (Row row : rs){
+                request.setAttribute("first_name", row.getString("first_name"));
+                request.setAttribute("last_name", row.getString("last_name"));
+                request.setAttribute("username", row.getString("login"));
+            }
+            rd.forward(request, response);
+        }else {
+            authError(request, response);
+        }
     }
     
     @Override
     protected void doPost (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = "dlennart";
+        HttpSession session=request.getSession();
+        LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+        String username = "majed";
+        if (lg.getlogedin()){
+            username=lg.getUsername();
+        }
         String last_name = request.getParameter("last_name");
         String first_name = request.getParameter("first_name");
         User usr = new User();
@@ -148,6 +162,13 @@ public class Profile extends HttpServlet {
        
        rd.forward(request, response);
        
+    }
+    
+    private void authError(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException{
+        request.setAttribute("msg", "You have no rights to edit this profile");
+        RequestDispatcher rd = request.getRequestDispatcher("/msg.jsp");
+        rd.forward(request, response);
     }
     
     private void error(String mess, HttpServletResponse response) throws ServletException, IOException {

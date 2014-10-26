@@ -5,39 +5,31 @@
  */
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
-import com.datastax.driver.core.Cluster;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
-import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
-import uk.ac.dundee.computing.aec.instagrim.models.SocialModel;
 
 /**
  *
  * @author dlennart
  */
+@WebServlet(name = "Logout", urlPatterns = {"/Logout"})
+public class Logout extends HttpServlet {
 
-@WebServlet(urlPatterns = {
-    "/Image/Like",
-    "/Image/Like/*",
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     
-})
-@MultipartConfig
-public class Like extends HttpServlet {
 
-    Cluster cluster=null;
-    
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        cluster = CassandraHosts.getCluster();
-    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -50,7 +42,8 @@ public class Like extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        request.getSession().invalidate();
+	response.sendRedirect("login.jsp");
     }
 
     /**
@@ -64,29 +57,7 @@ public class Like extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String args[] = Convertors.SplitRequestPath(request);
-        String user = args[4];
-        String picid = args[3];
-        System.out.println("POST called. User " +user+ " likes " +picid);
-        SocialModel sm = new SocialModel();
-        sm.setCluster(cluster);
-        sm.addLike(picid, user);
-        request.setAttribute("msg", "Posted successfully");
-        RequestDispatcher rd = request.getRequestDispatcher("/comment.jsp");
-        request.setAttribute("user", user);
-        rd.forward(request, response);
-    }
-    
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String args[] = Convertors.SplitRequestPath(request);
-        String user = args[4];
-        String picid = args[3];
-        System.out.println("DELETE called. User " +user+ " dislikes " +picid);
-        SocialModel sm = new SocialModel();
-        sm.setCluster(cluster);
-        sm.removeLike(picid, user);
+        
     }
 
     /**

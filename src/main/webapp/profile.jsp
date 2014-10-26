@@ -10,6 +10,7 @@
     </head>
     <body>
         <h1>Profile</h1>
+        <%@ include file="menu.jsp" %>
         <%
             String FirstName = (String) request.getAttribute("first_name");
             String Args = (String) request.getAttribute("last_name");
@@ -18,9 +19,9 @@
         <p><%=FirstName %></p>
         <p><%=Args %></p>
         <p><%=username %></p>
-        <p><image src="/Instagrim/Profile/Avatar/dlennart/Display"</p>
+        <p><image src="/Instagrim/Avatar/dlennart"</p>
         <h3>Profile picture Upload</h3>
-            <form method="POST" enctype="multipart/form-data" action="Avatar/<%=username %>">
+            <form method="POST" enctype="multipart/form-data" action="/Instagrim/Avatar/<%=username %>">
                 File to upload: <input type="file" name="upfile"><br/>
 
                 <br/>

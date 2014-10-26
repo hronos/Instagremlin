@@ -35,6 +35,7 @@
     </head>
     <body>
         <h1>Existing users</h1>
+        <%@ include file="menu.jsp" %>
         <% java.util.LinkedList<String> results = (java.util.LinkedList<String>) 
             request.getAttribute("users");
             
@@ -42,8 +43,15 @@
         %>
         <p>No users</p>
         <% } 
-        else {
-            Iterator<String> iterator;
+        else { %>
+            <table>
+                    <tr>
+                        <th>Username</th>
+                        <th>Last name</th>
+                        <th>First name</th>
+                        <th>Delete</th>
+                    </tr>
+           <% Iterator<String> iterator;
             iterator = results.iterator();
             
             while(iterator.hasNext()){
@@ -52,14 +60,18 @@
                 String username = iterator.next().toString();
                 %>
                 
-                <p>Username: <%=username%> 
-                    &nbsp; Last name: <%=last_name%> 
-                    &nbsp; First name: <%=first_name%>
-                    <button class="remove" id="15" name="<%=username%>">x</button>
-                </p>
+                    
+                <tr>
+                    <td><%=username%></td>
+                    <td><%=last_name%></td>
+                    <td><%=first_name%></td>
+                    <td><button class="remove" id="15" name="<%=username%>">x</button></td>
+                </tr>
                 
            <% }
+            
         }
-        %>          
+        %> 
+            </table>         
     </body>
 </html>

@@ -16,6 +16,7 @@
         
     </head>
     <body>
+        <%@ include file="menu.jsp" %>
         <%
             String picid = (String) request.getAttribute("picture");
             String likes = (String) request.getAttribute("likes");
@@ -23,7 +24,7 @@
             String user = (String) request.getAttribute("username");
             ArrayList<Comment> comments = (ArrayList<Comment>) request.getAttribute("comments");
             
-            LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+            
             String username = "majed";
             if (lg.getlogedin()){
                 username=lg.getUsername();
